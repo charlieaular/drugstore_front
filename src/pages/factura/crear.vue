@@ -5,11 +5,8 @@
     >
       Crear una nueva factura
     </p>
-    <Form
-      class="w-full max-w-lg"
-      @submit="onSubmit()"
-      :validation-schema="schema"
-    >
+
+    <div class="w-full max-w-lg">
       <div class="flex flex-wrap -mx-3 mb-6">
         <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
           <label
@@ -32,14 +29,7 @@
           >
             Pago total
           </label>
-          <Field
-            class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="pago_total"
-            name="pago_total"
-            v-model="model.pago_total"
-            type="number"
-          />
-          <ErrorMessage class="text-red-500 text-xs italic" name="pago_total" />
+          {{ pagoTotal }}
         </div>
       </div>
       <div class="flex flex-wrap -mx-3 mb-6">
@@ -135,7 +125,7 @@
       </div>
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        type="submit"
+        @click="onSubmit()"
       >
         Guardar
       </button>
@@ -145,14 +135,12 @@
       >
         Cancelar
       </router-link>
-    </Form>
+    </div>
   </section>
 </template>
 
 <style src="@vueform/multiselect/themes/default.css"></style>
 <script>
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
 import LitepieDatepicker from "litepie-datepicker";
 import factura from "../../services/factura/factura";
 import promocion from "../../services/promocion/promocion";
@@ -162,25 +150,16 @@ import Multiselect from "@vueform/multiselect";
 
 export default {
   components: {
-    Form,
-    Field,
-    ErrorMessage,
     LitepieDatepicker,
     Multiselect,
   },
   data() {
-    const schema = yup.object({
-      pago_total: yup.number().required(),
-    });
-
     const model = {
       fecha: dayjs().format("DD MMM YYYY"),
-      pago_total: 0,
       promocion: null,
       medicamentos: [],
     };
     return {
-      schema,
       model,
       medicamentos: [],
       promociones: [],
@@ -190,7 +169,15 @@ export default {
       },
     };
   },
-
+  computed: {
+    pagoTotal() {
+      return this.model.medicamentos.reduce((acc, el) => {
+        let { precio = 0 } =
+          this.medicamentos.find((ele) => ele.id == el) ?? {};
+        return acc + Number(precio);
+      }, 0);
+    },
+  },
   async mounted() {
     await this.listarPromociones();
     await this.listarMedicamentos();
@@ -216,12 +203,20 @@ export default {
     },
     async onSubmit() {
       try {
-        if (!this.model.fecha) {
+        if (!this.model.fecha)
           return this.$toast.error("La fecha es requerida");
-        }
+        if (!this.model.medicamentos.length)
+          return this.$toast.error("Debe haber al menos un medicamento");
         this.model.fecha = dayjs(this.model.fecha).format("YYYY-MM-DD");
-        this.model.pago_total = parseFloat(this.model.pago_total);
-        console.log(this.model);
+        this.model.pago_total = parseFloat(this.pagoTotal);
+
+        if (this.model.promocion) {
+          let { porcentaje } = this.promociones.find(
+            (el) => el.id == this.model.promocion
+          );
+          let restar = (Number(porcentaje) * this.pagoTotal) / 100;
+          this.model.pago_total -= restar;
+        }
         const { data } = await factura.crear(this.model);
         if (data.exito) {
           this.$router.replace({ name: "factura.listar" });
