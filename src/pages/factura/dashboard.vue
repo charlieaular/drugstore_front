@@ -85,7 +85,6 @@ export default {
         this.option.xAxis.data = fechas;
         this.option.series[0].data = pagos;
       } catch (error) {
-        console.log({ error });
         let err = error.response.data.error;
         this.$toast.error(err);
       }
