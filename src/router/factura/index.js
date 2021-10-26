@@ -20,6 +20,11 @@ export default [
         name: "factura.dashboard",
         component: () => import("../../pages/factura/dashboard"),
       },
+      {
+        path: "simular",
+        name: "factura.simular",
+        component: () => import("../../pages/factura/simular"),
+      },
     ],
   },
 ];

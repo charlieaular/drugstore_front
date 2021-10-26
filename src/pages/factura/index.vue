@@ -32,6 +32,22 @@
           </a>
         </li>
       </router-link>
+      <router-link
+        :to="{ name: 'factura.simular' }"
+        v-slot="{ href, isExactActive }"
+      >
+        <li class="mr-6">
+          <a
+            :href="href"
+            :class="[
+              (isExactActive && 'text-blue-800') ||
+                'text-blue-500 hover:text-blue-800',
+            ]"
+          >
+            Simulación
+          </a>
+        </li>
+      </router-link>
     </ul>
     <router-view></router-view>
   </section>

@@ -47,13 +47,13 @@
                     </div>
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500">
-                    {{ promocion.porcentaje }}
+                    {{ promocion.porcentaje }} %
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500">
-                    {{ promocion.fecha_inicio }}
+                    {{ formatearfecha(promocion.fecha_inicio) }}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500">
-                    {{ promocion.fecha_fin }}
+                    {{ formatearfecha(promocion.fecha_fin) }}
                   </td>
                 </tr>
               </tbody>
@@ -67,6 +67,7 @@
 
 <script>
 import promocion from "../../services/promocion/promocion";
+import dayjs from "dayjs";
 export default {
   data() {
     return {
@@ -77,6 +78,9 @@ export default {
     this.listar();
   },
   methods: {
+    formatearfecha(date) {
+      return dayjs(date).format("DD MMM YYYY");
+    },
     async listar() {
       try {
         const { data } = await promocion.listar();
