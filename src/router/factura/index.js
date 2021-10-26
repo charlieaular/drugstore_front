@@ -15,6 +15,11 @@ export default [
         name: "factura.crear",
         component: () => import("../../pages/factura/crear"),
       },
+      {
+        path: "dashboard",
+        name: "factura.dashboard",
+        component: () => import("../../pages/factura/dashboard"),
+      },
     ],
   },
 ];

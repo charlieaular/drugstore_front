@@ -11,7 +11,7 @@
       :validation-schema="schema"
     >
       <div class="flex flex-wrap -mx-3 mb-6 w-full">
-        <div class="w-full md:w-2/3 px-3 mb-6 md:mb-0">
+        <div class="w-full md:w-1/1 px-3 mb-6 md:mb-0">
           <label
             class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
             for="fecha"
